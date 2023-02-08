@@ -4,7 +4,7 @@ version: 2.1
 parameters:
   orbname:
     type: string
-    default: "queue"
+    default: "coco-circleci-queue"
     description: Change this to whatever name is correct for your orb.
 
 workflows:
