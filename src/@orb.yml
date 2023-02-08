@@ -6,26 +6,6 @@ description: |
   This orb requires the project to have an API key in order to query build states.
   It requires a single environment variable CIRCLECI_API_KEY which can be created in account settings - https://circleci.com/account/api.
 
-  1.8.3: Doc update
-  1.8.2: Adds urlencode for branch names. (@andrew-barnett)
-  1.8.1: Adds content-type header to API calls (@kevinr-electric) and prints message on error (@AlexMeuer)
-  1.8.0: minor fix same as version 1.8.0 (missing docs)
-  1.7.1: patch fix same as version 1.8.1 to catch folsk who dont update
-  1.7.0: adds regexp for job names, collab with @jonesie100
-  1.6.5: docs contribution by @pwilczynskiclearcode 
-  1.6.4: support slashes in Tags, thanks @dunial
-  1.6.3: addresses API changes that broke branch-job queueing, adds more API checks
-  1.6.1: fixes issue in tag matching , thanks @calvin-summer
-  1.6.0: Support Tags, thanks @nikolaik, @dunial
-  1.5.0: API variables name as parameter , thanks @philnielson
-  1.4.4: Docs improvements, thanks @jordan-brough
-  1.4.3: more confident confidence thanks @GreshamDanielStephens
-  1.4.2: Doc improvements, thanks @olleolleolle
-  1.4.1: fixes bug in block-workflow as job. thanks @mu-bro
-  1.4.0: Adds confidence checks to avoid race condition 
-  1.3.0: use small resource class in job
-
-
 
   
 display:
@@ -38,7 +18,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        queue: eddiewebb/queue@volatile
+        queue: commercetools/coco-circleci-queue@volatile
 
       workflows:
         build_deploy:
@@ -58,7 +38,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        queue: eddiewebb/queue@volatile
+        queue: commercetools/coco-circleci-queue@volatile
 
       workflows:
         build_deploy:
@@ -88,7 +68,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        queue: eddiewebb/queue@volatile
+        queue: commercetools/coco-circleci-queue@volatile
 
       workflows:
         build_deploy:
