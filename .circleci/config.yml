@@ -13,8 +13,6 @@ workflows:
       - validate
       - publish:
           context: [orbs]
-          requires:
-            - test
           filters:
             branches:
               only: main
