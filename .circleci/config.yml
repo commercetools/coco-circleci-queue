@@ -10,27 +10,12 @@ parameters:
 workflows:
   build-deploy:
     jobs:
-      - validate:
-          filters:
-            branches:
-              ignore: 
-                - master
-      - test:
-          context: [orbs]
-          requires: 
-            - validate
-          filters:
-            branches:
-              only: 
-                - staging
-                - trying
+      - validate
       - publish:
           context: [orbs]
-          requires:
-            - test
           filters:
             branches:
-              only: staging
+              only: main
 
 jobs:
   validate:
@@ -41,53 +26,7 @@ jobs:
       - checkout
       - install-circleci
       - pack-and-validate
-  test:
-    docker:
-      - image: cimg/base:2019.08
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - install-circleci
-      - pack-and-validate
-      - pr-info
-      - run:
-          name: Publish Dev
-          command: |
-            PUBLISH_MESSAGE=`circleci orb publish packed.yml eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> --token ${CIRCLECI_API_KEY}`
-            ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb `\(.*\)` was published.*/\1/p')
-            echo "export ORB_VERSION=\"${ORB_VERSION}\"" >> $BASH_ENV
-            echo $ORB_VERSION
-            echo "export PR_MESSAGE=\"BotComment: *Development* version of orb available for manual validation - \\\`${ORB_VERSION}\\\`\"" >> $BASH_ENV
-      - install-bats
-      - run:
-          name: Import Tests using BATS
-          command: |
-            export BATS_IMPORT_DEV_ORB="eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>>"
-            bats test            
-      - pr-comment
-      - run:
-          name: Check Semver
-          command: |
-            if [ "$PR_NUMBER" == "" ];then
-              echo "No pr found, do nothing"
-              exit 0
-            fi
-            TITLE=`curl -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${PR_NUMBER}" | jq '.title' `
-            SEMVER_INCREMENT=`echo $TITLE | sed -En 's/.*\[semver:(major|minor|patch|skip)\].*/\1/p'`
-            if [ -z ${SEMVER_INCREMENT} ];then
-              echo "Merge commit did not indicate which SemVer increment to make. Please ammend commit with [semver:FOO] where FOO is major, minor, or patch"
-              exit 1
-            elif [ "$SEMVER_INCREMENT" == "skip" ];then
-              echo "SEMVER in commit indicated to skip orb release"
-              echo "export PR_MESSAGE=\"Orb publish was skipped due to [semver:skip] in commit message.\""  >> $BASH_ENV
-              exit 0
-            else
-              PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`            
-              echo $PUBLISH_MESSAGE
-              ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb .* was promoted to `\(.*\)`.*/\1/p')
-              echo "export PR_MESSAGE=\"BotComment: *Production* version of orb available for use - \\\`${ORB_VERSION}\\\`\"" >> $BASH_ENV
-            fi         
-
+      
   publish:
     docker:
       - image: cimg/base:2019.08
@@ -118,21 +57,7 @@ jobs:
 
 
 
-commands:
-  install-bats:
-    description: installs the BATS bash testing tool
-    steps:
-      - run:      
-          name: Install BATS (bash testing)
-          command: |
-            cd /tmp && git clone https://github.com/bats-core/bats-core.git && cd bats-core
-            ./install.sh /usr/local
-      - run:
-          name: Install YQ
-          command: |
-            curl -L https://github.com/mikefarah/yq/releases/download/v4.14.1/yq_linux_amd64 -o yq
-            chmod a+x yq
-            mv yq /usr/local/bin/            
+commands:        
   install-circleci:
     description: installs the new CIrcleCI CLI with orb support
     steps:
