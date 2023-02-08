@@ -92,10 +92,6 @@ steps:
           # Only needed for private projects
           if [ -z "${<< parameters.circleci-api-key >>}" ]; then
             echo "<< parameters.circleci-api-key >> not set. Private projects will be inaccessible."
-          else
-            fetch "https://circleci.com/api/v2/me" "/tmp/me.cci"
-            me=$(jq -e '.id' /tmp/me.cci)
-            echo "Using API key for user: ${me}"
           fi
           VCS_TYPE="<<parameters.vcs-type>>"
         }
