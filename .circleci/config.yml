@@ -12,7 +12,7 @@ workflows:
       - validate:
           filters:
             branches:
-              - main
+              only: main
       - test:
           context: [orbs]
           requires: 
