@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   orbname:
     type: string
-    default: "queue"
+    default: "coco-circleci-queue"
     description: Change this to whatever name is correct for your orb.
 
 workflows:
@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Publish Dev
           command: |
-            PUBLISH_MESSAGE=`circleci orb publish packed.yml eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> --token ${CIRCLECI_API_KEY}`
+            PUBLISH_MESSAGE=`circleci orb publish packed.yml commercetools/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> --token ${CIRCLECI_API_KEY}`
             ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb `\(.*\)` was published.*/\1/p')
             echo "export ORB_VERSION=\"${ORB_VERSION}\"" >> $BASH_ENV
             echo $ORB_VERSION
@@ -99,7 +99,7 @@ jobs:
               echo "export PR_MESSAGE=\"Orb publish was skipped due to [semver:skip] in commit message.\""  >> $BASH_ENV
               exit 0
             else
-              PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`            
+              PUBLISH_MESSAGE=`circleci orb publish promote commercetools/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>> ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`            
               echo $PUBLISH_MESSAGE
               ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb .* was promoted to `\(.*\)`.*/\1/p')
               echo "export PR_MESSAGE=\"BotComment: *Production* version of orb available for use - \\\`${ORB_VERSION}\\\`\"" >> $BASH_ENV
