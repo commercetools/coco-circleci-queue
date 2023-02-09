@@ -13,7 +13,7 @@ workflows:
           filters:
             branches:
               ignore: 
-                - master
+                - main
       - test:
           context: [orbs]
           requires: 
@@ -24,7 +24,7 @@ workflows:
             - test
           filters:
             branches:
-              only: staging
+              only: main
 
 jobs:
   validate:
@@ -58,7 +58,6 @@ jobs:
           command: |
             export BATS_IMPORT_DEV_ORB="eddiewebb/<<pipeline.parameters.orbname>>@dev:<<pipeline.number>>"
             bats test            
-      - pr-comment
       - run:
           name: Check Semver
           command: |
